@@ -5,8 +5,8 @@
 ### Abstract
 Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar.
 ### Ressources
-- The Algorithmics of Bisimilarity, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
-- Timed Analysis of Security Protocols, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
+- Timed Analysis of Security Protocols, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
+- The Algorithmics of Bisimilarity, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
 - [UUPAL](https://uppaal.org)
 ---
 ### The algorithm by Kanellakis and Smolka
@@ -35,3 +35,7 @@ for each state t ∈ B do
 if B2 is empty then return {B1}
 else return {B1, B2}
 ```
+With:
+> Theorem 0.2.6 (Kanellakis and Smolka) When applied to a finite labelled transition system with n states and m transitions, the algorithm by Kanellakis and Smolka computes the partition corresponding to strong bisimilarity in time O(nm).
+
+[Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
