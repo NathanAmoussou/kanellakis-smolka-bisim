@@ -10,6 +10,8 @@ Python Implementation of the Kanellakis and Smolka algorithm to test if two fini
 - [UUPAL](https://uppaal.org)
 ---
 ### The algorithm by Kanellakis and Smolka
+- Let (Pr, Act, -->) be a finite labelled transition system.
+- π = {B0, . . . , Bk}, k ≥ 0 a partition of the set of states Pr.
 ```
 π := {Pr}
 changed := true
@@ -20,4 +22,16 @@ while changed do
 			sort the a-labelled transitions from states in B
 			if split(B, a, π) = {B1, B2} ≠ {B}
 			then refine π by replacing B with B1 and B2, and set changed to true
+```
+Using:
+```
+function split(B, a, π)
+choose some state s ∈ B
+B1, B2 := ∅
+for each state t ∈ B do
+	if s and t can reach the same set of blocks in π via a-labelled transitions
+	then B1 := B1 ∪ {t}
+	else B2 := B2 ∪ {t}
+if B2 is empty then return {B1}
+else return {B1, B2}
 ```
