@@ -3,7 +3,7 @@
 - **University:** Université Côte d'Azur
 ---
 ### Abstract
-Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar. We will use UPPAAL for systems definition and representation, our parser will use `.xml` file format as an input.
+Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar. We will use a custom `.lts` file format for LTS models definition.
 ### Ressources
 - Timed Analysis of Security Protocols, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
 - The Algorithmics of Bisimilarity, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
@@ -41,5 +41,7 @@ With:
 ### Project Realization Steps
 1. Theory (LTS, bisimilarity, Kanellakis and Smolka)
 2. Parser definition
+	- After experimentation, UPPAAL seems to complicated for our needs.
+	- We chose to use `.lts` files.
 3. Algorithm implementation
 4. Testing and examples
