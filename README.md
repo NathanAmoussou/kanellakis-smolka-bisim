@@ -1,9 +1,23 @@
 # kanellakis-smolka-bisim
 - **Authors:** Florent Belot, Nathan Amoussou
 - **University:** Université Côte d'Azur
+---
 ### Abstract
 Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar.
 ### Ressources
 - The Algorithmics of Bisimilarity, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
 - Timed Analysis of Security Protocols, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
 - [UUPAL](https://uppaal.org)
+---
+### The algorithm by Kanellakis and Smolka
+```
+π := {Pr}
+changed := true
+while changed do
+	changed := false
+	for each block B ∈ π do
+		for each action a do
+			sort the a-labelled transitions from states in B
+			if split(B, a, π) = {B1, B2} ≠ {B}
+			then refine π by replacing B with B1 and B2, and set changed to true
+```
