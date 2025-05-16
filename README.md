@@ -3,12 +3,11 @@
 - **University:** Université Côte d'Azur
 ---
 ### Abstract
-Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar.
+Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar. We will use UPPAAL for systems definition and representation, our parser will use UPPAAL export format as an input.
 ### Ressources
 - Timed Analysis of Security Protocols, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
 - The Algorithmics of Bisimilarity, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
-- [UUPAL](https://uppaal.org)
----
+- [UPPAAL](https://uppaal.org)
 ### The algorithm by Kanellakis and Smolka
 - Let (Pr, Act, -->) be a finite labelled transition system.
 - π = {B0, . . . , Bk}, k ≥ 0 a partition of the set of states Pr.
@@ -38,4 +37,7 @@ else return {B1, B2}
 With:
 > Theorem 0.2.6 (Kanellakis and Smolka) When applied to a finite labelled transition system with n states and m transitions, the algorithm by Kanellakis and Smolka computes the partition corresponding to strong bisimilarity in time O(nm).
 
-[Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
+– [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
+### Project Realization Steps
+1. Theory (LTS, bisimilarity, Kanellakis and Smolka)
+2. 
