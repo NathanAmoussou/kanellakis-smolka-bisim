@@ -1,25 +1,51 @@
 from collections import defaultdict
 from typing import Set, Dict, Tuple, List
 
+class LTS:
+    def __init__(self, name=''):
+        self.transitions = defaultdict(list)
+        self.states = set()
+        self.actions = set()
+        self.name = name
 
-def load_lts(path: str) -> Tuple[Set[str], Set[str], Dict[Tuple[str, str], Set[str]]]:
+    def add_transition(self, source, action, target):
+        self.transitions[source].append((action, target))
+        self.states.update([source, target])
+        self.actions.add(action)
+
+    def prefix_states(self, prefix):
+        new_transitions = defaultdict(list)
+        state_map = {}
+        for state in self.states:
+            state_map[state] = f"{prefix}_{state}"
+        for src in self.transitions:
+            for (act, tgt) in self.transitions[src]:
+                new_src = state_map[src]
+                new_tgt = state_map[tgt]
+                new_transitions[new_src].append((act, new_tgt))
+        self.transitions = new_transitions
+        self.states = set(state_map.values())
+        return state_map
+
+
+def load_lts(path: str) -> Tuple[LTS, str]:
     """
-    Charge un fichier .lts et retourne les états, actions, et transitions.
+    Charge un fichier .lts et retourne l'objet LTS le représentant'.
     Format .lts : chaque ligne non vide ou comment (#) contient :
         src action tgt
+    et la src de la première ligne du fichier sera considéré comme l'état initiale.
     """
-    states: Set[str] = set()
-    actions: Set[str] = set()
-    transitions: Dict[Tuple[str, str], Set[str]] = {}
+    init = None
+    lts = LTS(path)
     with open(path) as f:
         for line in f:
             if not line.strip() or line.startswith('#'):
                 continue
             src, act, tgt = line.split()
-            states |= {src, tgt}
-            actions.add(act)
-            transitions.setdefault((src, act), set()).add(tgt)
-    return states, actions, transitions
+            if init is None:
+                init = src
+            lts.add_transition(src, act, tgt)
+    return lts, init
 
 
 def split_block(block: Set[str], action: str, partition: List[Set[str]],
@@ -31,7 +57,7 @@ def split_block(block: Set[str], action: str, partition: List[Set[str]],
     reach_map: Dict[frozenset, Set[str]] = defaultdict(set)
     for state in block:
         reachable_blocks = set()
-        for tgt in transitions.get((state, action), []):
+        for (act, tgt) in transitions.get(state, []):
             # Trouver le bloc contenant tgt
             for blk in partition:
                 if tgt in blk:
@@ -42,24 +68,22 @@ def split_block(block: Set[str], action: str, partition: List[Set[str]],
     # Retourner la liste de sous-blocs obtenus
     return [sub for sub in reach_map.values()]
 
-
-def kanellakis_smolka(states: Set[str], actions: Set[str],
-                       transitions: Dict[Tuple[str, str], Set[str]]) -> List[Set[str]]:
+def kanellakis_smolka(lts : LTS) -> List[Set[str]]:
     """
     Implémente l'algorithme de Kanellakis-Smolka pour le raffinement de partitions.
     Retourne la partition finale correspondant aux classes de bisimilarité forte.
     Complexité O(n * m) selon Aceto et al. 2011.
     """
     # Partition initiale : un seul bloc contenant tous les états
-    partition: List[Set[str]] = [set(states)]
+    partition: List[Set[str]] = [set(lts.states)]
     changed = True
     while changed:
         changed = False
         new_partition: List[Set[str]] = []
         for block in partition:
             refined = False
-            for action in actions:
-                sub_blocks = split_block(block, action, partition, transitions)
+            for action in lts.actions:
+                sub_blocks = split_block(block, action, partition, lts.transitions)
                 if len(sub_blocks) > 1:
                     new_partition.extend(sub_blocks)
                     refined = True
@@ -77,17 +101,36 @@ def are_bisimilar(file1: str, file2: str) -> bool:
     et compare si les partitions finales sont identiques.
     Renvoie True si ils sont bisimilaires (partition identique), False sinon.
     """
-    S1, A1, T1 = load_lts(file1)
-    S2, A2, T2 = load_lts(file2)
+    lts1, init1 = load_lts(file1)
+    lts2, init2 = load_lts(file2)
+
     # Vérifier que les alphabets d'actions sont identiques
-    if A1 != A2:
+    if lts1.actions != lts2.actions:
         return False
-    part1 = kanellakis_smolka(S1, A1, T1)
-    part2 = kanellakis_smolka(S2, A1, T2)
-    # Comparer les partitions finales (ensembles de blocs)
-    set_blocks1 = {frozenset(b) for b in part1}
-    set_blocks2 = {frozenset(b) for b in part2}
-    return set_blocks1 == set_blocks2
+
+    # Renommer les états pour éviter conflits
+    map1 = lts1.prefix_states("L1")
+    map2 = lts2.prefix_states("L2")
+    init1 = map1[init1]
+    init2 = map2[init2]
+    
+    # Fusionner les deux LTS
+    combined = LTS("combined")
+    for s, trans in lts1.transitions.items():
+        for (a, t) in trans:
+            combined.add_transition(s, a, t)
+    for s, trans in lts2.transitions.items():
+        for (a, t) in trans:
+            combined.add_transition(s, a, t)
+
+    # Appliquer l'algo de Kanellakis-Smolka
+    partition = kanellakis_smolka(combined)
+
+    # Vérifier si les deux états initiaux sont dans le même bloc
+    for block in partition:
+        if init1 in block and init2 in block:
+            return True
+    return False
 
 
 if __name__ == "__main__":
