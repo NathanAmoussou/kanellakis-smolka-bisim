@@ -30,10 +30,10 @@ class LTS:
 
 def load_lts(path: str) -> Tuple[LTS, str]:
     """
-    Charge un fichier .lts et retourne l'objet LTS le représentant'.
-    Format .lts : chaque ligne non vide ou comment (#) contient :
+    Loads a file . lts and returns the LTS object representing'.
+    Format . lts: each non-empty line or how (#) contains:
         src action tgt
-    et la src de la première ligne du fichier sera considéré comme l'état initiale.
+    and the src of the first line of the file will be considered as the initial state.
     """
     init = None
     lts = LTS(path)
@@ -51,30 +51,30 @@ def load_lts(path: str) -> Tuple[LTS, str]:
 def split_block(block: Set[str], action: str, partition: List[Set[str]],
                 transitions: Dict[Tuple[str, str], Set[str]]) -> List[Set[str]]:
     """
-    Scinde un bloc selon les transitions étiquetées `action` sous forme de deux sous-blocs,
-    en regroupant les états qui atteignent les mêmes blocs cibles.
+    Splits a block according to the transitions labeled ‘action’ into two sub-blocks,
+    by grouping states that reach the same target blocks.
     """
     reach_map: Dict[frozenset, Set[str]] = defaultdict(set)
     for state in block:
         reachable_blocks = set()
         for (act, tgt) in transitions.get(state, []):
-            # Trouver le bloc contenant tgt
+            # Find the block containing tgt
             for blk in partition:
                 if tgt in blk:
                     reachable_blocks.add(frozenset(blk))
                     break
         key = frozenset(reachable_blocks)
         reach_map[key].add(state)
-    # Retourner la liste de sous-blocs obtenus
+    # Return the list of obtained sub-blocks
     return [sub for sub in reach_map.values()]
 
 def kanellakis_smolka(lts : LTS) -> List[Set[str]]:
     """
-    Implémente l'algorithme de Kanellakis-Smolka pour le raffinement de partitions.
-    Retourne la partition finale correspondant aux classes de bisimilarité forte.
-    Complexité O(n * m) selon Aceto et al. 2011.
+    Implements the Kanellakis-Smolka algorithm for score refinement.
+    Returns the final partition corresponding to the strong bisimilarity classes.
+    Complexity O(n * m) according to Aceto et al. 2011.
     """
-    # Partition initiale : un seul bloc contenant tous les états
+    # Initial partition: a single block containing all states
     partition: List[Set[str]] = [set(lts.states)]
     changed = True
     while changed:
@@ -104,17 +104,17 @@ def are_bisimilar(file1: str, file2: str) -> bool:
     lts1, init1 = load_lts(file1)
     lts2, init2 = load_lts(file2)
 
-    # Vérifier que les alphabets d'actions sont identiques
+    # Check that the action alphabets are identical
     if lts1.actions != lts2.actions:
         return False
 
-    # Renommer les états pour éviter conflits
+    # Rename states to avoid conflicts
     map1 = lts1.prefix_states("L1")
     map2 = lts2.prefix_states("L2")
     init1 = map1[init1]
     init2 = map2[init2]
     
-    # Fusionner les deux LTS
+    # Merge the two LTS
     combined = LTS("combined")
     for s, trans in lts1.transitions.items():
         for (a, t) in trans:
@@ -123,10 +123,10 @@ def are_bisimilar(file1: str, file2: str) -> bool:
         for (a, t) in trans:
             combined.add_transition(s, a, t)
 
-    # Appliquer l'algo de Kanellakis-Smolka
+    # Apply the algo of Kanellakis-Smolka
     partition = kanellakis_smolka(combined)
 
-    # Vérifier si les deux états initiaux sont dans le même bloc
+    # Check if the two initial states are in the same block
     for block in partition:
         if init1 in block and init2 in block:
             return True
