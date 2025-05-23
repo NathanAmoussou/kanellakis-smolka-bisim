@@ -4,6 +4,13 @@
 ---
 ### Abstract
 Python Implementation of the Kanellakis and Smolka algorithm to test if two finite transition systems are bisimilar. We will use a custom `.lts` file format for LTS models definition.
+### LTS format
+Each line represent a transition as a triplet such that the first element represents the starting vertex, the second the action and the third the finishing vertex. The initial vertex of an LTS is considered to be the starting vertex of the first line in the file.
+Example (s0 will be considered as the initial vertex): 
+```
+s0 a s1
+s1 b s2
+```
 ### Ressources
 - Timed Analysis of Security Protocols, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
 - The Algorithmics of Bisimilarity, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
