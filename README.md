@@ -11,6 +11,12 @@ Example (s0 will be considered as the initial vertex):
 s0 a s1
 s1 b s2
 ```
+### Use
+To use it you have to interpret the code with python and put as command line argument the 2 files in LTS format representing the 2 finite transition system of which we want to know if there is a bisimilarity.
+Example : 
+```
+python3 bisim.py file1.lts file2.lts
+```
 ### Ressources
 - Timed Analysis of Security Protocols, [Corin et al. 2005](http://arxiv.org/abs/cs/0503036)
 - The Algorithmics of Bisimilarity, [Aceto et al. 2011](https://www.cambridge.org/core/product/identifier/CBO9780511792588A028/type/book_part)
