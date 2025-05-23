@@ -12,7 +12,7 @@ s0 a s1
 s1 b s2
 ```
 ### Use
-To use it you have to interpret the code with python and put as command line argument the 2 files in LTS format representing the 2 finite transition system of which we want to know if there is a bisimilarity.
+To use it you have to interpret the code with a python interpreter and in the command line 2 path to files in LTS format representing the 2 finite transition system of which we want to know if there is a bisimilarity.
 Example : 
 ```
 python3 bisim.py file1.lts file2.lts
